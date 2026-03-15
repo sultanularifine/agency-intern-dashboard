@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sultanul Arifinee | Web Developer & CEO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            cursor: none;
+        }
+
+        body {
+            transition: background-color 0.5s ease;
+            overflow-x: hidden;
+            scroll-behavior: auto;
+        }
+
+        .text-primary {
+            color: #ff4d4d !important;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        /* Cursor */
+        #cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+
+        #cursor-outline {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 77, 77, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Social Dock */
+        .social-dock {
+            position: fixed;
+            right: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .dock-item {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            perspective: 1000px;
+        }
+
+        .dock-item:hover {
+            transform: translateX(-10px) rotateY(-20deg) scale(1.1);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .dock-name {
+            position: absolute;
+            right: 65px;
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dock-item:hover .dock-name {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .dock-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Custom Sidebar Scrollbar */
+        #dashboard-sidebar div::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #dashboard-sidebar div::-webkit-scrollbar-thumb {
+            background: #ff4d4d33;
+            border-radius: 10px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+    </style>
+</head>
+
+<body class="bg-lightBg dark:bg-darkBg text-slate-900 dark:text-slate-100">
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+    <div id="canvas-container"></div>
+    <div id="header"></div>
+
+
+    <main class="pt-32 pb-24 px-4 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+
+        <div id="sidebar"></div>
+
+      <div class="flex-1 space-y-8">
+    <div class="mt-16 mb-8">
+        <h3 class="text-xl font-black uppercase tracking-tighter italic text-white">
+            Deliver <span class="text-primary">Milestone</span>
+        </h3>
+        <p class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-40 text-white">
+            Finalize your work and notify the mentor
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+            <div class="glass p-1 rounded-[3rem] border-white/5 bg-gradient-to-br from-white/10 to-transparent shadow-2xl">
+                <div class="glass rounded-[2.8rem] p-8 md:p-10 backdrop-blur-2xl">
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2 text-white">Select Task</label>
+                                <div class="relative">
+                                    <select class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-xs font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none appearance-none text-white backdrop-blur-md">
+                                        <option class="bg-[#0a0a0a]">Laravel API Auth #REQ-992</option>
+                                        <option class="bg-[#0a0a0a]">SVG Map Optimization #REQ-884</option>
+                                        <option class="bg-[#0a0a0a]">Database Migration #REQ-771</option>
+                                    </select>
+                                    <span class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-white/20 text-[10px]">▼</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2 text-white">Submission Link</label>
+                                <input type="url" placeholder="GitHub / Vercel Link"
+                                    class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-xs font-bold focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-white placeholder:opacity-20 backdrop-blur-md">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2 text-white">Upload Deliverables (ZIP/Images)</label>
+                            <div class="border-2 border-dashed border-white/10 rounded-3xl p-10 flex flex-col items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-all cursor-pointer group relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <span class="text-3xl mb-3 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300">📤</span>
+                                <p class="text-[9px] font-black uppercase tracking-widest text-white/40 relative z-10">
+                                    Drag & Drop or <span class="text-primary group-hover:underline">Browse Files</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2 text-white">Intern Comment</label>
+                            <textarea rows="4" placeholder="Mention specific changes or challenges faced..."
+                                class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-xs font-medium focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none resize-none text-white placeholder:opacity-20 backdrop-blur-md"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-primary text-white text-[11px] font-black uppercase tracking-[0.3em] py-5 rounded-2xl shadow-[0_20px_40px_rgba(255,77,77,0.2)] hover:scale-[1.01] hover:brightness-110 active:scale-95 transition-all">
+                            Confirm Submission
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <div class="glass p-8 rounded-[3rem] border-white/5 bg-gradient-to-b from-primary/10 to-transparent shadow-xl">
+                <h4 class="text-xs font-black uppercase tracking-widest italic text-white mb-6">
+                    Submission <span class="text-primary">Rules</span>
+                </h4>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3 group">
+                        <span class="text-primary text-xs group-hover:scale-125 transition-transform">✔</span>
+                        <p class="text-[10px] font-medium text-white/60 leading-relaxed group-hover:text-white/90 transition-colors">
+                            Ensure all Laravel controllers are properly commented.
+                        </p>
+                    </li>
+                    <li class="flex items-start gap-3 group">
+                        <span class="text-primary text-xs group-hover:scale-125 transition-transform">✔</span>
+                        <p class="text-[10px] font-medium text-white/60 leading-relaxed group-hover:text-white/90 transition-colors">
+                            Upload a screenshot of the final UI for responsive check.
+                        </p>
+                    </li>
+                    <li class="flex items-start gap-3 group">
+                        <span class="text-primary text-xs group-hover:scale-125 transition-transform">✔</span>
+                        <p class="text-[10px] font-medium text-white/60 leading-relaxed group-hover:text-white/90 transition-colors">
+                            Include migration files if database changes were made.
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="glass p-8 rounded-[3rem] border-white/5 flex flex-col items-center text-center group hover:bg-white/5 transition-all">
+                <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-xl mb-4 group-hover:rotate-12 transition-transform">
+                    💡
+                </div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Pro Tip</p>
+                <p class="text-[10px] font-medium text-white/60 italic leading-relaxed">
+                    "Double-check your SVG code for the <span class="text-primary/80">Election Map</span> project to ensure optimization."
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <button id="sidebar-toggle" onclick="toggleSidebar()"
+        class="fixed bottom-6 right-6 z-[70] lg:hidden w-14 h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center text-2xl active:scale-90 transition-all border border-white/20">☰</button>
+
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            function loadHTML(id, file) {
+                fetch(file)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("File not found: " + file);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById(id).innerHTML = data;
+                    })
+                    .catch(error => console.error(error));
+            }
+
+            loadHTML("header", "header.html");
+            loadHTML("sidebar", "sidebar.html");
+
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sultanul Arifinee | Web Developer & CEO</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            cursor: none;
+        }
+
+        body {
+            transition: background-color 0.5s ease;
+            overflow-x: hidden;
+            scroll-behavior: auto;
+        }
+
+        .text-primary {
+            color: #ff4d4d !important;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.2);
+        }
+
+        /* Cursor */
+        #cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+
+        #cursor-outline {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 77, 77, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Social Dock */
+        .social-dock {
+            position: fixed;
+            right: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .dock-item {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            perspective: 1000px;
+        }
+
+        .dock-item:hover {
+            transform: translateX(-10px) rotateY(-20deg) scale(1.1);
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .dock-name {
+            position: absolute;
+            right: 65px;
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .dock-item:hover .dock-name {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .dock-item svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Custom Sidebar Scrollbar */
+        #dashboard-sidebar div::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #dashboard-sidebar div::-webkit-scrollbar-thumb {
+            background: #ff4d4d33;
+            border-radius: 10px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+    </style>
+</head>
+
+<body class="bg-lightBg dark:bg-darkBg text-slate-900 dark:text-slate-100">
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+    <div id="canvas-container"></div>
+    <div id="header"></div>
+
+
+    <main class="pt-32 pb-24 px-4 md:px-12 max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+
+        <div id="sidebar"></div>
+
+       <div class="flex-1 space-y-8">
+    <div class="mt-16 mb-8 flex justify-between items-end">
+        <div>
+            <h3 class="text-xl font-black uppercase tracking-tighter italic text-slate-900 dark:text-white">
+                Personal <span class="text-primary">Identity</span>
+            </h3>
+            <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-white/40">
+                Manage your credentials and professional status
+            </p>
+        </div>
+        <button class="bg-primary text-white text-[9px] font-black uppercase tracking-widest px-6 py-2.5 rounded-xl shadow-[0_10px_20px_rgba(255,77,77,0.3)] hover:scale-105 active:scale-95 transition-all">
+            Save Changes
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <div class="p-[1px] rounded-[3rem] bg-gradient-to-br from-white/20 to-transparent dark:from-white/10 h-fit shadow-xl">
+            <div class="bg-white/70 dark:bg-slate-950/40 backdrop-blur-3xl rounded-[2.9rem] p-8 flex flex-col items-center text-center border border-white/50 dark:border-white/5">
+                <div class="relative mb-6 group">
+                    <div class="w-32 h-32 rounded-[2.5rem] border-4 border-primary/20 p-1.5 shadow-[0_20px_50px_rgba(255,77,77,0.2)] cursor-pointer overflow-hidden relative">
+                        <img src="https://api.placeholder.com/200/200"
+                            class="w-full h-full rounded-[2rem] object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                            <span class="text-[10px] font-black uppercase text-white">Change</span>
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white dark:border-[#0a0a0a] flex items-center justify-center shadow-lg" title="Verified Professional">
+                        <span class="text-[8px] text-white italic font-black">✔</span>
+                    </div>
+                </div>
+
+                <h4 class="text-xl font-black uppercase tracking-tight text-slate-900 dark:text-white">Md. Sultanul Arifine</h4>
+                <p class="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">Founder & CEO, Requin BD</p>
+
+                <div class="w-full h-px bg-slate-200 dark:bg-white/5 my-6"></div>
+
+                <div class="grid grid-cols-2 gap-4 w-full">
+                    <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
+                        <p class="text-[8px] font-bold text-slate-400 dark:text-white/30 uppercase mb-1">Badge</p>
+                        <p class="text-[10px] font-black text-slate-900 dark:text-white italic">ELITE</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-white/5 p-3 rounded-2xl border border-slate-100 dark:border-white/5">
+                        <p class="text-[8px] font-bold text-slate-400 dark:text-white/30 uppercase mb-1">Joined</p>
+                        <p class="text-[10px] font-black text-slate-900 dark:text-white italic">Nov 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white/70 dark:bg-slate-950/40 backdrop-blur-3xl p-8 rounded-[3rem] border border-white/50 dark:border-white/5 shadow-xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/40 ml-2">Full Name</label>
+                        <input type="text" value="Md. Sultanul Arifine"
+                            class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-xs font-bold text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/40 ml-2">Expertise</label>
+                        <input type="text" value="Laravel, PHP, Digital Education"
+                            class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-xs font-bold text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/40 ml-2">Email Address</label>
+                        <input type="email" value="sultan@requinbd.com"
+                            class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-xs font-bold text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/40 ml-2">Phone</label>
+                        <input type="text" value="+880 1XXX-XXXXXX"
+                            class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-xs font-bold text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                    </div>
+                </div>
+
+                <div class="mt-8 space-y-2">
+                    <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/40 ml-2">Bio / Vision</label>
+                    <textarea rows="4"
+                        class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-5 py-4 text-xs font-medium text-slate-600 dark:text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none resize-none leading-relaxed">Empowering the next generation through technology and digital literacy at Requin BD.</textarea>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button class="bg-white/70 dark:bg-white/5 backdrop-blur-xl p-5 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center justify-between group hover:border-primary transition-all shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg">🔑</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Change Password</span>
+                    </div>
+                    <span class="text-slate-300 dark:text-white/20 group-hover:text-primary group-hover:translate-x-1 transition-all">→</span>
+                </button>
+                <button class="bg-white/70 dark:bg-white/5 backdrop-blur-xl p-5 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center justify-between group hover:border-blue-500 transition-all shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg">🌐</span>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Link Portfolio</span>
+                    </div>
+                    <span class="text-slate-300 dark:text-white/20 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">→</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <button id="sidebar-toggle" onclick="toggleSidebar()"
+        class="fixed bottom-6 right-6 z-[70] lg:hidden w-14 h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center text-2xl active:scale-90 transition-all border border-white/20">☰</button>
+
+    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            function loadHTML(id, file) {
+                fetch(file)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("File not found: " + file);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        document.getElementById(id).innerHTML = data;
+                    })
+                    .catch(error => console.error(error));
+            }
+
+            loadHTML("header", "header.html");
+            loadHTML("sidebar", "sidebar.html");
+
+        });
+    </script>
+</body>
+
+</html>
